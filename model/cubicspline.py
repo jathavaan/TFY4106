@@ -109,8 +109,6 @@ print('Banens høyeste punkt (m)', np.max(y))
 print('NB: SKRIV NED festepunkthøydene når du/dere er fornøyd med banen.')
 print('Eller kjør programmet på nytt inntil en attraktiv baneform vises.')
 
-print("\n\n================BEREGNINGER================\n\n")
-
 curvature_lst = []
 speed_lst = []
 ca_lst = []
@@ -180,6 +178,6 @@ plt.show()
 
 plt.plot(x, friction_lst)
 plt.xlabel("x[m]")
-plt.ylabel("Friction")
+plt.ylabel("Friksjon")
 plt.show()
 
