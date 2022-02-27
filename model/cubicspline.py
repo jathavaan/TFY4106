@@ -25,11 +25,11 @@ import calculations as calc  # Importerer funksjoner fra formelarket
 h = 0.200
 xfast = np.asarray([0, h, 2 * h, 3 * h, 4 * h, 5 * h, 6 * h, 7 * h])
 
-# Vi begrenser starthøyden (og samtidig den maksimale høyden) til
-# å ligge mellom 250 og 300 mm
+# Vi begrenser starthÃ¸yden (og samtidig den maksimale hÃ¸yden) til
+# Ã¥ ligge mellom 250 og 300 mm
 ymax = 300
 # yfast: tabell med 8 heltall mellom 50 og 300 (mm); representerer
-# høyden i de 8 festepunktene
+# hÃ¸yden i de 8 festepunktene
 yfast = np.asarray(np.random.randint(50, ymax, size=8))
 # konverter fra m til mm
 yfast = yfast / 1000
@@ -37,8 +37,8 @@ yfast = yfast / 1000
 # banens stigningstall beregnet med utgangspunkt i de 8 festepunktene.
 inttan = np.diff(yfast) / h
 attempts = 1
-# while-løkken sjekker om en eller flere av de 3 betingelsene ovenfor
-# ikke er tilfredsstilt; i så fall velges nye festepunkter inntil
+# while-lÃ¸kken sjekker om en eller flere av de 3 betingelsene ovenfor
+# ikke er tilfredsstilt; i sÃ¥ fall velges nye festepunkter inntil
 # de 3 betingelsene er oppfylt
 while (yfast[0] < yfast[1] * 1.04 or
        yfast[0] < yfast[2] * 1.08 or
@@ -62,8 +62,8 @@ while (yfast[0] < yfast[1] * 1.04 or
 # xfast = xfast/1000
 # yfast = yfast/1000
 
-# Når programmet her har avsluttet while-løkka, betyr det at
-# tallverdiene i tabellen yfast vil resultere i en tilfredsstillende bane. 
+# NÃ¥r programmet her har avsluttet while-lÃ¸kka, betyr det at
+# tallverdiene i tabellen yfast vil resultere i en tilfredsstillende bane.
 
 # Programmet beregner deretter de 7 tredjegradspolynomene, et
 # for hvert intervall mellom to nabofestepunkter.
@@ -106,8 +106,22 @@ print('Antall forsøk', attempts)
 print('Festepunkthøyder (m)', yfast)
 print('Banens høyeste punkt (m)', np.max(y))
 
-print('NB: SKRIV NED festepunkthøydene når du/dere er fornøyd med banen.')
-print('Eller kjør programmet på nytt inntil en attraktiv baneform vises.')
+
+def distance_to_time(x_pos, v_lst):
+    t_lst = []
+    time = 0
+
+    for i in range(len(x_pos) - 1):
+        current_x = x_pos[i]
+        next_x = x_pos[i + 1]
+        v = v_lst[i + 1]
+        dx = next_x - current_x
+        t = dx / v
+        time += t
+        t_lst.append(time)
+
+    return t_lst
+
 
 curvature_lst = []
 speed_lst = []
@@ -117,6 +131,7 @@ acceleration_lst = []
 friction_lst = []
 
 y_0 = y[0]
+
 
 for x_pos in x:
     d1y = cs(x_pos, 1)
@@ -179,5 +194,13 @@ plt.show()
 plt.plot(x, friction_lst)
 plt.xlabel("x[m]")
 plt.ylabel("Friksjon")
+plt.show()
+
+# Plotter fartsgrafen mot farten
+t = distance_to_time(x, speed_lst)
+
+plt.plot(t, speed_lst[1:])
+plt.xlabel("Tid [s]")
+plt.ylabel("Fart [m/s]")
 plt.show()
 

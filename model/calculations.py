@@ -53,5 +53,3 @@ def friction(beta):
     global M
     global g
     return (2 * M * g * np.sin(beta)) / 7
-
-
