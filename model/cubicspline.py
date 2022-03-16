@@ -20,6 +20,7 @@ import numpy as np
 from scipy.interpolate import CubicSpline
 
 import calculations as calc  # Importerer funksjoner fra formelarket
+import handle_data as hd
 
 # Horisontal avstand mellom festepunktene er 0.200 m
 h = 0.200
@@ -33,6 +34,7 @@ ymax = 300
 yfast = np.asarray(np.random.randint(50, ymax, size=8))
 # konverter fra m til mm
 yfast = yfast / 1000
+yfast_konst = np.asarray([0.220, 0.143, 0.102, 0.0676, 0.08704, 0.137, 0.128, 0.05031])
 # inttan: tabell med 7 verdier for (yfast[n+1]-yfast[n])/h (n=0..7); dvs
 # banens stigningstall beregnet med utgangspunkt i de 8 festepunktene.
 inttan = np.diff(yfast) / h
@@ -70,7 +72,7 @@ while (yfast[0] < yfast[1] * 1.04 or
 
 
 # Med scipy.interpolate-funksjonen CubicSpline:
-cs = CubicSpline(xfast, yfast, bc_type='natural')
+cs = CubicSpline(xfast, yfast_konst, bc_type='natural')
 
 xmin = 0.000
 xmax = 1.401
@@ -89,7 +91,7 @@ d2y = cs(x, 2)  # d2y=tabell med 1401 verdier for y''(x)
 
 # Eksempel: Plotter banens form y(x)
 baneform = plt.figure('y(x)', figsize=(12, 6))
-plt.plot(x, y, xfast, yfast, '*')
+plt.plot(x, y, xfast, yfast_konst, '*')
 plt.title('Banens form')
 plt.xlabel('$x$ (m)', fontsize=20)
 plt.ylabel('$y(x)$ (m)', fontsize=20)
@@ -103,7 +105,7 @@ plt.show()
 
 
 print('Antall forsøk', attempts)
-print('Festepunkthøyder (m)', yfast)
+print('Festepunkthøyder (m)', yfast_konst)
 print('Banens høyeste punkt (m)', np.max(y))
 
 
@@ -131,7 +133,6 @@ acceleration_lst = []
 friction_lst = []
 
 y_0 = y[0]
-
 
 for x_pos in x:
     d1y = cs(x_pos, 1)
@@ -164,18 +165,20 @@ for x_pos in x:
     # Friksjon
     f = calc.friction(beta)
     friction_lst.append(f)
-
-
+"""
 plt.plot(x, curvature_lst)
 plt.xlabel("x [m]")
 plt.ylabel("Krumning")
 plt.show()
+"""
 
-plt.plot(x, speed_lst)
-plt.xlabel("x[m]")
-plt.ylabel("Fart")
+hd.vel_x()
+plt.plot(x, speed_lst, label="Numerisk")
+plt.legend()
+plt.grid()
 plt.show()
 
+"""
 plt.plot(x, ca_lst)
 plt.xlabel("x[m]")
 plt.ylabel("Sentripetalakselerasjon")
@@ -185,22 +188,39 @@ plt.plot(x, normal_force_lst)
 plt.xlabel("x[m]")
 plt.ylabel("Normalkraft")
 plt.show()
+"""
 
-plt.plot(x, acceleration_lst)
-plt.xlabel("x[m]")
-plt.ylabel("Akselerasjon")
+hd.acceleration()
+plt.plot(x, acceleration_lst, label="Numerisk")
+plt.legend()
+plt.grid()
 plt.show()
 
+"""
 plt.plot(x, friction_lst)
 plt.xlabel("x[m]")
 plt.ylabel("Friksjon")
 plt.show()
+"""
 
-# Plotter fartsgrafen mot farten
+# Plotter fartsgrafen mot tiden
 t = distance_to_time(x, speed_lst)
 
-plt.plot(t, speed_lst[1:])
-plt.xlabel("Tid [s]")
-plt.ylabel("Fart [m/s]")
+hd.vel_t()
+plt.plot(t, speed_lst[1:], label="Numerisk")
+plt.legend()
+plt.grid()
 plt.show()
 
+# Plotter friksjon over normalkraft mhp. posisjonen
+f_over_N = []
+for i in range(len(friction_lst)):
+    f = friction_lst[i]
+    N = normal_force_lst[i]
+    f_over_N.append(f / N)
+
+hd.friction_over_N()
+plt.plot(x, f_over_N, label="Numerisk")
+plt.legend()
+plt.grid()
+plt.show()

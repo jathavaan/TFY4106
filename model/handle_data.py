@@ -48,31 +48,31 @@ d2y_e = np.zeros(len(x_e) - 4)
 for i in range(len(d2y_e)):
     d2y_e[i] = (dy_e[i + 2] - dy_e[i]) / (x_e[i + 3] - x_e[i + 1])
 
+
 # Merk: De deriverte har nå to færre elementer! De mangler den første og siste verdien
 # For å bruke disse i beregninger må vi derfor slice arraysene.
 
-# baneformen hastighet (funk av x og t), akselelerasjon, krumning, f/N grafen plottet mot x
-
-# Baneform med hensyn på x
-plt.plot(x_e, y_e)
-plt.title("Baneform")
-plt.xlabel("x [m]")
-plt.ylabel("y [m]")
-plt.show()
+# baneformen hastighet (funk av x og t), akselelerasjon, f/N grafen plottet mot x
 
 # Hastighet med hensyn på x
-plt.plot(x_e, v_e)
-plt.title("Hastighet mhp. x")
-plt.xlabel("x [m]")
-plt.ylabel("v [m/s]")
-plt.show()
+def vel_x():
+    global x_e
+    global v_e
+    plt.plot(x_e, v_e, label="Eksperimentell")
+    plt.title("Hastighet mhp. x")
+    plt.xlabel("x [m]")
+    plt.ylabel("v [m/s]")
+
 
 # Hastighet med hensyn på t
-plt.plot(t_e, v_e)
-plt.title("Hastighet mhp. tid")
-plt.xlabel("t [s]")
-plt.ylabel("v [m/s]")
-plt.show()
+def vel_t():
+    global t_e
+    global v_e
+    plt.plot(t_e, v_e, label="Eksperimentell")
+    plt.title("Hastighet mhp. tid")
+    plt.xlabel("t [s]")
+    plt.ylabel("v [m/s]")
+
 
 # Akselerasjon
 a_e = []
@@ -80,11 +80,15 @@ for dx in dy_e:
     beta = np.arctan(dx)
     a_e.append(cal.acceleration(beta))
 
-plt.plot(x_e[1:-1], a_e)
-plt.title("Akselerasjon")
-plt.xlabel("x [m]")
-plt.ylabel("a [m/s^2]")
-plt.show()
+
+def acceleration():
+    global x_e
+    global a_e
+    plt.plot(x_e[1:-1], a_e, label="Eksperimentell")
+    plt.title("Akselerasjon")
+    plt.xlabel("x [m]")
+    plt.ylabel("a [m/s^2]")
+
 
 # f/N med hensyn på x
 dy_e = dy_e[1:-1]
@@ -103,10 +107,11 @@ for i in range(len(d2y_e)):
 
     f_over_N.append(cal.friction(beta) / cal.normal_force(beta, y_0, y_1, dy, d2y))
 
-plt.plot(x_e[2:-2], f_over_N)
-plt.title("Friksjon over normalkraft")
-plt.xlabel("x [m]")
-plt.ylabel("f/N []")
-plt.show()
 
-
+def friction_over_N():
+    global x_e
+    global f_over_N
+    plt.plot(x_e[2:-2], f_over_N, label="Eksperimentell")
+    plt.title("Friksjon over normalkraft")
+    plt.xlabel("x [m]")
+    plt.ylabel("f/N [-]")
